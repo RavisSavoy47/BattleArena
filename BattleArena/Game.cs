@@ -29,6 +29,7 @@ namespace BattleArena
         /// </summary>
         public void Run()
         {
+
         }
 
         /// <summary>
@@ -36,6 +37,7 @@ namespace BattleArena
         /// </summary>
         public void Start()
         {
+
         }
 
         /// <summary>
@@ -43,6 +45,7 @@ namespace BattleArena
         /// </summary>
         public void Update()
         {
+
         }
 
         /// <summary>
@@ -50,6 +53,7 @@ namespace BattleArena
         /// </summary>
         public void End()
         {
+
         }
 
         /// <summary>
@@ -104,6 +108,7 @@ namespace BattleArena
         /// </summary>
         void DisplayCurrentScene()
         {
+
         }
 
         /// <summary>
@@ -111,6 +116,21 @@ namespace BattleArena
         /// </summary>
         void DisplayMainMenu()
         {
+            int input = GetInput("Welcome to Battle Arena", "\n 1. Yes", "\n 2. No");
+
+            if (input == 1)
+            {
+                currentArea = 1;
+                gameOver = false;
+            }
+
+            if (input == 2)
+            {
+                    
+                gameOver = true;
+            }
+
+
         }
 
         /// <summary>
@@ -128,6 +148,7 @@ namespace BattleArena
         /// </summary>
         public void CharacterSelection()
         {
+
         }
 
         /// <summary>
@@ -136,6 +157,7 @@ namespace BattleArena
         /// <param name="character">The character that will have its stats shown</param>
         void DisplayStats(Character character)
         {
+
         }
 
         /// <summary>
@@ -146,6 +168,7 @@ namespace BattleArena
         /// <returns>The amount of damage done to the defender</returns>
         float CalculateDamage(float attackPower, float defensePower)
         {
+
         }
 
         /// <summary>
@@ -156,6 +179,7 @@ namespace BattleArena
         /// <returns>The amount of damage done to the defender</returns>
         public float Attack(ref Character attacker, ref Character defender)
         {
+
         }
 
         /// <summary>
@@ -163,6 +187,7 @@ namespace BattleArena
         /// </summary>
         public void Battle()
         {
+
         }
 
         /// <summary>
@@ -171,6 +196,7 @@ namespace BattleArena
         /// </summary>
         void CheckBattleResults()
         {
+
         }
 
     }
