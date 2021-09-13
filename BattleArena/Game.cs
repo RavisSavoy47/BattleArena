@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace BattleArena
 {
@@ -69,11 +67,13 @@ namespace BattleArena
 
             KingFrog.name = "The Guardians of Frogs";
             KingFrog.health = 150.0f;
-            KingFrog.attackPower = 50.0f;
+            KingFrog.attackPower = 40.0f;
             KingFrog.defensePower = 5f;
 
             //enemies array
             enemies = new Character[] { SmallFrog, StackedFrog, MegaFrog, KingFrog };
+
+            ResetCurrentEnemy();
         }
 
         /// <summary>
@@ -152,18 +152,19 @@ namespace BattleArena
                     break;
                 case 1:
                     CharacterSelection();
-                    DisplayStats(player);
                     break;
                 case 2:
                     Battle();
+
+                    Console.ReadKey();
+                    Console.Clear();
+
                     CheckBattleResults();
                     break;
                 case 3:
                     DisplayMainMenu();
-                    Console.ReadKey();
+
                     break;
-
-
                 default:
                     Console.WriteLine("Invaild scene index");
                     break;
@@ -175,11 +176,12 @@ namespace BattleArena
         /// </summary>
         void DisplayMainMenu()
         {
-            int input = GetInput("Do you want to Restart your Adventure?", "\n 1. Yes", "\n 2. No");
+            int input = GetInput("Do you want to Restart your Adventure?", "Yes", "No");
 
             if (input == 1)
             {
-                currentScene = 0;
+                currentScene = 1;
+                ResetCurrentEnemy();
                 gameOver = false;
             }
 
@@ -198,7 +200,8 @@ namespace BattleArena
         /// </summary>
         void GetPlayerName()
         {
-            Console.WriteLine("Welcome to Hell! What's your name? \n >");
+            Console.WriteLine("Welcome to Hell! What's your name?");
+            Console.Write(">");
             player.name = Console.ReadLine();
         }
 
@@ -210,24 +213,25 @@ namespace BattleArena
         {
             GetPlayerName();
             int choice = GetInput("Hope you stay for a while. Please pick your character.", "Wizard", "Knight");
-            switch (choice)
+
+            if (choice == 1)
             {
+                
+                player.health = 200f;
+                player.attackPower = 45f;
+                player.defensePower = 35f;
 
-                case 0:
-                    player.name = "Name: " + player.name;
-                    player.health = 50f;
-                    player.attackPower = 25f;
-                    player.defensePower = 5f;
-                    break;
-
-                case 1:
-                    player.name = "Name: " + player.name;
-                    player.health = 75f;
-                    player.attackPower = 15f;
-                    player.defensePower = 10f;
-                    break;
 
             }
+
+            else if (choice == 2)
+            {
+                
+                player.health = 100f;
+                player.attackPower = 75f;
+                player.defensePower = 40f;
+            }
+            currentScene = 2;
         }
 
         /// <summary>
@@ -236,10 +240,12 @@ namespace BattleArena
         /// <param name="">The character that will have its stats shown</param>
         void DisplayStats(Character character)
         {
-            Console.WriteLine("Name: " + player.name);
-            Console.WriteLine("Health: " + player.health);
-            Console.WriteLine("Attack: " + player.attackPower);
-            Console.WriteLine("Defense: " + player.defensePower);
+            Console.WriteLine("Name: " + character.name);
+            Console.WriteLine("Health: " + character.health);
+            Console.WriteLine("Attack: " + character.attackPower);
+            Console.WriteLine("Defense: " + character.defensePower);
+
+ 
         }
 
         /// <summary>
@@ -267,7 +273,9 @@ namespace BattleArena
         /// <returns>The amount of damage done to the defender</returns>
         public float Attack(ref Character attacker, ref Character defender)
         {
-            return attacker.attackPower - defender.defensePower;
+            float damageTaken = CalculateDamage(attacker.attackPower, defender.defensePower);
+            defender.health -= damageTaken;
+            return damageTaken;
         }
 
 
@@ -277,25 +285,39 @@ namespace BattleArena
         /// </summary>
         public void Battle()
         {
-            int choice = GetInput("A Enemy Approaches you!", "Attak", "Dodge");
+            //Print PLayer stats
+            DisplayStats(player);
+            //Print Enemy stats
+            DisplayStats(currentEnemy);
+
+            int choice = GetInput("A Enemy Approaches you!", "Attack", "Dodge");
             switch(choice)
             {
                 case 1:
-                    //Print PLayer stats
-                    DisplayStats(player);
-                    //Print Enemy stats
-                    DisplayStats(currentEnemy);
                     
-                    //player attaks enemy and enemy attcaks player
-                    Attack(ref player, ref currentEnemy);
-                    Attack(ref currentEnemy, ref player);
+                    
+                    //player attaks enemy 
+                    float damageTaken = Attack(ref player, ref currentEnemy);
+                    Console.WriteLine(currentEnemy.name + " has taken " + damageTaken);
 
+                    //enemy attcaks player
+                    damageTaken = Attack(ref currentEnemy, ref player);
+                    Console.WriteLine(player.name + " has taken " + damageTaken);
                     break;
                 case 2:
-                    Console.WriteLine("You Dodge " + currentEnemy);
+                    Console.WriteLine("You Dodge " + currentEnemy.name);
                     Console.ReadLine();
                     break;
+
             }
+        }
+
+        void ResetCurrentEnemy()
+        {
+            currentEnemyIndex = 0;
+            //Set Starting fighters
+            currentEnemy = enemies[currentEnemyIndex];
+
         }
 
         /// <summary>
@@ -304,21 +326,36 @@ namespace BattleArena
         /// </summary>
         void CheckBattleResults()
         {
-            //check if the enemy dies
-            if (currentEnemy.health <= 0)
-            {
-                //..If the enemy dies the next enemy appears 
-                currentEnemyIndex++;
-
-                currentEnemy = enemies[currentEnemyIndex];
-
-            }
+            Console.Clear();
             //If the player dies they are asked if they want to keep playing or not
             if (player.health <= 0)
             {
-                DisplayMainMenu();
+                Console.WriteLine("You died! Get Gud!");
+                gameOver = true;
+                
 
             }
+            //check if the enemy dies
+            if (currentEnemy.health <= 0)
+            {
+                currentEnemyIndex++;
+                //If all enemies have died continue to next scene
+                if (currentEnemyIndex >= enemies.Length)
+                {
+                    Console.WriteLine("You Defeated The great Evil!");
+                    Console.Write("Congratulations!");
+
+                    currentScene = 3;
+                }
+                else
+                {
+                    //..If the enemy dies the next enemy appears 
+                    
+
+                    currentEnemy = enemies[currentEnemyIndex];
+                }
+            }
+
         }
 
     }
