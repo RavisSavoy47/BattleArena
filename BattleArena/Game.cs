@@ -17,8 +17,8 @@ namespace BattleArena
 
     class Game
     {
-        bool gameOver;
-        int currentScene;
+        bool gameOver = false;
+        int currentScene = 1;
         Character player;
         Character SmallFrog;
         Character StackedFrog;
@@ -49,14 +49,13 @@ namespace BattleArena
         /// </summary>
         public void Start()
         {
-            //Initilize Eniemes
+            //Initilize Enemies 
             SmallFrog.name = "Nice Frog";
             SmallFrog.health = 35.0f;
             SmallFrog.attackPower = 10.0f;
             SmallFrog.defensePower = 5.0f;
 
-
-            StackedFrog.name = "Triple Dexlux Frog";
+            StackedFrog.name = "Dexlux Frog";
             StackedFrog.health = 55.0f;
             StackedFrog.attackPower = 35.0f;
             StackedFrog.defensePower = 13.0f;
@@ -72,8 +71,9 @@ namespace BattleArena
             KingFrog.health = 150.0f;
             KingFrog.attackPower = 50.0f;
             KingFrog.defensePower = 5f;
-            
 
+            //enemies array
+            enemies = new Character[] { SmallFrog, StackedFrog, MegaFrog, KingFrog };
         }
 
         /// <summary>
@@ -82,7 +82,6 @@ namespace BattleArena
         public void Update()
         {
             DisplayCurrentScene();
-            Console.Clear();
         }
 
         /// <summary>
@@ -145,6 +144,7 @@ namespace BattleArena
         /// </summary>
         void DisplayCurrentScene()
         {
+            //Goes through each Scene
             switch (currentScene)
             {
                 case 0:
@@ -152,10 +152,11 @@ namespace BattleArena
                     break;
                 case 1:
                     CharacterSelection();
-                    DisplayStats(Character);
+                    DisplayStats(player);
                     break;
                 case 2:
                     Battle();
+                    CheckBattleResults();
                     break;
                 case 3:
                     DisplayMainMenu();
@@ -174,11 +175,11 @@ namespace BattleArena
         /// </summary>
         void DisplayMainMenu()
         {
-            int input = GetInput("Do you want to Restart?", "\n 1. Yes", "\n 2. No");
+            int input = GetInput("Do you want to Restart your Adventure?", "\n 1. Yes", "\n 2. No");
 
             if (input == 1)
             {
-                currentScene = 1;
+                currentScene = 0;
                 gameOver = false;
             }
 
@@ -208,7 +209,7 @@ namespace BattleArena
         public void CharacterSelection()
         {
             GetPlayerName();
-            int choice = GetInput("Hope you stay for a while. Please pick your character.", "\n 1. Wizard", "\n 2. Knight");
+            int choice = GetInput("Hope you stay for a while. Please pick your character.", "Wizard", "Knight");
             switch (choice)
             {
 
@@ -276,7 +277,25 @@ namespace BattleArena
         /// </summary>
         public void Battle()
         {
-            
+            int choice = GetInput("A Enemy Approaches you!", "Attak", "Dodge");
+            switch(choice)
+            {
+                case 1:
+                    //Print PLayer stats
+                    DisplayStats(player);
+                    //Print Enemy stats
+                    DisplayStats(currentEnemy);
+                    
+                    //player attaks enemy and enemy attcaks player
+                    Attack(ref player, ref currentEnemy);
+                    Attack(ref currentEnemy, ref player);
+
+                    break;
+                case 2:
+                    Console.WriteLine("You Dodge " + currentEnemy);
+                    Console.ReadLine();
+                    break;
+            }
         }
 
         /// <summary>
@@ -285,7 +304,21 @@ namespace BattleArena
         /// </summary>
         void CheckBattleResults()
         {
+            //check if the enemy dies
+            if (currentEnemy.health <= 0)
+            {
+                //..If the enemy dies the next enemy appears 
+                currentEnemyIndex++;
 
+                currentEnemy = enemies[currentEnemyIndex];
+
+            }
+            //If the player dies they are asked if they want to keep playing or not
+            if (player.health <= 0)
+            {
+                DisplayMainMenu();
+
+            }
         }
 
     }
