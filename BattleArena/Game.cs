@@ -20,6 +20,10 @@ namespace BattleArena
         bool gameOver;
         int currentScene;
         Character player;
+        Character SmallFrog;
+        Character StackedFrog;
+        Character MegaFrog;
+        Character KingFrog;
         Character[] enemies;
         private int currentEnemyIndex = 0;
         private Character currentEnemy;
@@ -45,6 +49,30 @@ namespace BattleArena
         /// </summary>
         public void Start()
         {
+            //Initilize Eniemes
+            SmallFrog.name = "Nice Frog";
+            SmallFrog.health = 35.0f;
+            SmallFrog.attackPower = 10.0f;
+            SmallFrog.defensePower = 5.0f;
+
+
+            StackedFrog.name = "Triple Dexlux Frog";
+            StackedFrog.health = 55.0f;
+            StackedFrog.attackPower = 35.0f;
+            StackedFrog.defensePower = 13.0f;
+
+
+            MegaFrog.name = "Captain Frog";
+            MegaFrog.health = 100.0f;
+            MegaFrog.attackPower = 70.0f;
+            MegaFrog.defensePower = 13.0f;            
+
+
+            KingFrog.name = "The Guardians of Frogs";
+            KingFrog.health = 150.0f;
+            KingFrog.attackPower = 50.0f;
+            KingFrog.defensePower = 5f;
+            
 
         }
 
@@ -123,14 +151,17 @@ namespace BattleArena
                     Start();
                     break;
                 case 1:
+                    CharacterSelection();
+                    DisplayStats(Character);
+                    break;
+                case 2:
                     Battle();
-                    ();
+                    break;
+                case 3:
+                    DisplayMainMenu();
                     Console.ReadKey();
                     break;
 
-                case 2:
-                    DisplayRestartMenu();
-                    break;
 
                 default:
                     Console.WriteLine("Invaild scene index");
@@ -201,7 +232,7 @@ namespace BattleArena
         /// <summary>
         /// Prints a characters stats to the console
         /// </summary>
-        /// <param name="character">The character that will have its stats shown</param>
+        /// <param name="">The character that will have its stats shown</param>
         void DisplayStats(Character character)
         {
             Console.WriteLine("Name: " + player.name);
@@ -238,12 +269,14 @@ namespace BattleArena
             return attacker.attackPower - defender.defensePower;
         }
 
+
+
         /// <summary>
         /// Simulates one turn in the current monster fight
         /// </summary>
         public void Battle()
         {
-
+            
         }
 
         /// <summary>
