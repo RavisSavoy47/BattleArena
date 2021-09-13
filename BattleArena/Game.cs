@@ -30,6 +30,14 @@ namespace BattleArena
         public void Run()
         {
 
+            Start();
+
+            while (!gameOver)
+            {
+                Update();
+            }
+
+            End();
         }
 
         /// <summary>
@@ -45,7 +53,8 @@ namespace BattleArena
         /// </summary>
         public void Update()
         {
-
+            DisplayCurrentScene();
+            Console.Clear();
         }
 
         /// <summary>
@@ -53,7 +62,7 @@ namespace BattleArena
         /// </summary>
         public void End()
         {
-
+            Console.WriteLine("You escaped this time but I'll get you next time!");
         }
 
         /// <summary>
@@ -108,7 +117,25 @@ namespace BattleArena
         /// </summary>
         void DisplayCurrentScene()
         {
+            switch (currentScene)
+            {
+                case 0:
+                    Start();
+                    break;
+                case 1:
+                    Battle();
+                    ();
+                    Console.ReadKey();
+                    break;
 
+                case 2:
+                    DisplayRestartMenu();
+                    break;
+
+                default:
+                    Console.WriteLine("Invaild scene index");
+                    break;
+            }
         }
 
         /// <summary>
@@ -116,11 +143,11 @@ namespace BattleArena
         /// </summary>
         void DisplayMainMenu()
         {
-            int input = GetInput("Welcome to Battle Arena", "\n 1. Yes", "\n 2. No");
+            int input = GetInput("Do you want to Restart?", "\n 1. Yes", "\n 2. No");
 
             if (input == 1)
             {
-                currentArea = 1;
+                currentScene = 1;
                 gameOver = false;
             }
 
@@ -139,7 +166,8 @@ namespace BattleArena
         /// </summary>
         void GetPlayerName()
         {
-
+            Console.WriteLine("Welcome to Hell! What's your name? \n >");
+            player.name = Console.ReadLine();
         }
 
         /// <summary>
@@ -148,7 +176,26 @@ namespace BattleArena
         /// </summary>
         public void CharacterSelection()
         {
+            GetPlayerName();
+            int choice = GetInput("Hope you stay for a while. Please pick your character.", "\n 1. Wizard", "\n 2. Knight");
+            switch (choice)
+            {
 
+                case 0:
+                    player.name = "Name: " + player.name;
+                    player.health = 50f;
+                    player.attackPower = 25f;
+                    player.defensePower = 5f;
+                    break;
+
+                case 1:
+                    player.name = "Name: " + player.name;
+                    player.health = 75f;
+                    player.attackPower = 15f;
+                    player.defensePower = 10f;
+                    break;
+
+            }
         }
 
         /// <summary>
@@ -157,7 +204,10 @@ namespace BattleArena
         /// <param name="character">The character that will have its stats shown</param>
         void DisplayStats(Character character)
         {
-
+            Console.WriteLine("Name: " + player.name);
+            Console.WriteLine("Health: " + player.health);
+            Console.WriteLine("Attack: " + player.attackPower);
+            Console.WriteLine("Defense: " + player.defensePower);
         }
 
         /// <summary>
@@ -168,7 +218,13 @@ namespace BattleArena
         /// <returns>The amount of damage done to the defender</returns>
         float CalculateDamage(float attackPower, float defensePower)
         {
+            float damage = attackPower - defensePower;
+            if (attackPower - defensePower <= 0)
+            {
+                damage = 0;
+            }
 
+            return damage;
         }
 
         /// <summary>
@@ -179,7 +235,7 @@ namespace BattleArena
         /// <returns>The amount of damage done to the defender</returns>
         public float Attack(ref Character attacker, ref Character defender)
         {
-
+            return attacker.attackPower - defender.defensePower;
         }
 
         /// <summary>
