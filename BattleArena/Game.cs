@@ -89,7 +89,7 @@ namespace BattleArena
         /// </summary>
         public void End()
         {
-            Console.WriteLine("You escaped this time but I'll get you next time!");
+            Console.WriteLine("Fairwell NERD!");
         }
 
         /// <summary>
@@ -187,7 +187,7 @@ namespace BattleArena
 
             if (input == 2)
             {
-                    
+                   
                 gameOver = true;
             }
 
@@ -343,8 +343,8 @@ namespace BattleArena
                 if (currentEnemyIndex >= enemies.Length)
                 {
                     Console.WriteLine("You Defeated The great Evil!");
-                    Console.Write("Congratulations!");
-
+                    Console.WriteLine("Congratulations!");
+                    Console.ReadKey();
                     currentScene = 3;
                 }
                 else
