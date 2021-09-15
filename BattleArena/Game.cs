@@ -43,7 +43,7 @@ namespace BattleArena
 
             Entity MegaFrog = new Entity("Captain Frog", 100, 70, 13);
 
-            Entity KingFrog = new Entity("The Guardians of Frogs", 150, 40, 5);
+            Entity KingFrog = new Entity("The Guardians of Frogs", 150, 55, 5);
 
             //enemies array
             _enemies = new Entity[] { SmallFrog, StackedFrog, MegaFrog, KingFrog };
@@ -152,7 +152,7 @@ namespace BattleArena
 
             if (Choice == 1)
             {
-                _currentScene = 1;
+                _currentScene = 0;
                 _currentEnemyIndex = 0;
                 _currentEnemy = _enemies[_currentEnemyIndex];
             }
@@ -229,12 +229,12 @@ namespace BattleArena
             //Print Enemy stats
             DisplayStats(_currentEnemy);
 
-            int choice = GetInput("A " + _currentEnemy.name + " approaches you!", "Attack", "Dodge");
+            int choice = GetInput("A " + _currentEnemy.Name + " approaches you!", "Attack", "Dodge");
             if (choice == 1)
             {
                     //player attaks enemy 
-                    damageDealth = Attack(ref _player, ref _currentEnemy);
-                    Console.WriteLine("You dealth " + damageDealth + " damage!");
+                    damageDealth = _player.Attack(_currentEnemy);
+                    Console.WriteLine("You dealt " + damageDealth + " damage!");
             }
              else if (choice == 2)
             {
@@ -243,8 +243,8 @@ namespace BattleArena
                 Console.Clear();
             }
 
-            damageDealth = Attack(ref _currentEnemy, ref _player);
-            Console.WriteLine("The " + _currentEnemy.name + " dealt" + damageDealth, " damage!");
+            damageDealth = _currentEnemy.Attack(_player);
+            Console.WriteLine("The " + _currentEnemy.Name + " dealt " + damageDealth + " damage!");
 
             Console.ReadKey(true);
             Console.Clear();
@@ -258,7 +258,7 @@ namespace BattleArena
         {
             Console.Clear();
             //If the player dies they are asked if they want to keep playing or not
-            if (_player.health <= 0)
+            if (_player.Health <= 0)
             {
                 Console.WriteLine("You died! Get Gud!");
                 Console.ReadKey(true);
@@ -266,9 +266,9 @@ namespace BattleArena
                 _currentScene = 3;
             }
             //check if the enemy dies
-            else if (_currentEnemy.health <= 0)
+            else if (_currentEnemy.Health <= 0)
             {
-                Console.WriteLine("You Defeated " + _currentEnemy.name);
+                Console.WriteLine("You Defeated " + _currentEnemy.Name);
                 Console.ReadKey();
                 _currentEnemyIndex++;
 
