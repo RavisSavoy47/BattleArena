@@ -2,29 +2,16 @@
 
 namespace BattleArena
 {
-    //Test
-
-
-    /// <summary>
-    /// Represents any entity that exists in game
-    /// </summary>
-    struct Character
-    {
-        public string name;
-        public float health;
-        public float attackPower;
-        public float defensePower;
-    }
 
     class Game
     {
-        bool gameOver = false;
-        int currentScene = 0;
-        Character player;
-        Character[] enemies;
-        private int currentEnemyIndex = 0;
-        private Character currentEnemy;
-
+        private bool _gameOver;
+        private int _currentScene;
+        private Entity _player;
+        private Entity[] _enemies;
+        private int _currentEnemyIndex;
+        private Entity _currentEnemy;
+        private string _playerName;
         /// <summary>
         /// Function that starts the main game loop
         /// </summary>
@@ -33,7 +20,7 @@ namespace BattleArena
 
             Start();
 
-            while (!gameOver)
+            while (!_gameOver)
             {
                 Update();
             }
@@ -46,19 +33,22 @@ namespace BattleArena
         /// </summary>
         public void Start()
         {
-            //Initilize Enemies 
-            Character SmallFrog = new Character { name = "Nice Frog", health = 35, attackPower = 10, defensePower = 5 };
+            _gameOver = false;
+            _currentScene = 0;
+            _currentEnemyIndex = 0;
 
-            Character StackedFrog = new Character { name = "Delux Frog", health = 55, attackPower = 35, defensePower = 13 };
+            Entity SmallFrog = new Entity("Nice Frog", 35, 10, 5);
 
-            Character MegaFrog = new Character { name = "Captain Frog", health = 100, attackPower = 70, defensePower = 13 };
+            Entity StackedFrog = new Entity("Delux Frog", 55, 35, 13);
 
-            Character KingFrog = new Character { name = "The Guardians of Frogs", health = 150, attackPower = 40, defensePower = 5 };
+            Entity MegaFrog = new Entity("Captain Frog", 100, 70, 13);
+
+            Entity KingFrog = new Entity("The Guardians of Frogs", 150, 40, 5);
 
             //enemies array
-            enemies = new Character[] { SmallFrog, StackedFrog, MegaFrog, KingFrog };
+            _enemies = new Entity[] { SmallFrog, StackedFrog, MegaFrog, KingFrog };
 
-            currentEnemy = enemies[currentEnemyIndex];
+            _currentEnemy = _enemies[_currentEnemyIndex];
         }
 
         /// <summary>
@@ -131,7 +121,7 @@ namespace BattleArena
         void DisplayCurrentScene()
         {
             //Goes through each Scene
-            switch (currentScene)
+            switch (_currentScene)
             {
                 case 0:
                     GetPlayerName();
@@ -162,14 +152,14 @@ namespace BattleArena
 
             if (Choice == 1)
             {
-                currentScene = 1;
-                currentEnemyIndex = 0;
-                currentEnemy = enemies[currentEnemyIndex];
+                _currentScene = 1;
+                _currentEnemyIndex = 0;
+                _currentEnemy = _enemies[_currentEnemyIndex];
             }
 
             else if (Choice == 2)
             {  
-                gameOver = true;
+                _gameOver = true;
             }
         }
 
@@ -181,15 +171,15 @@ namespace BattleArena
         {
             Console.WriteLine("Welcome to Hell! What's your name?");
             Console.Write(">");
-            player.name = Console.ReadLine();
+            _playerName = Console.ReadLine();
 
             Console.Clear();
             //Checks if the player wants to keep their name
-            int Choice = GetInput("You've entered " + player.name + ". Are you sure you want to keep this name?", "Yes", "No");
+            int Choice = GetInput("You've entered " + _playerName + ". Are you sure you want to keep this name?", "Yes", "No");
 
             if(Choice == 1)
             {
-                currentScene++;
+                _currentScene++;
             }
         }
 
@@ -199,22 +189,18 @@ namespace BattleArena
         /// </summary>
         public void CharacterSelection()
         {
-            int choice = GetInput("Hope you survive" + player.name + ". Please pick your character.", "Wizard", "Knight");
+            int choice = GetInput("Hope you survive" + _playerName + ". Please pick your character.", "Wizard", "Knight");
 
             if (choice == 1)
             {
-                player.health = 200;
-                player.attackPower = 45;
-                player.defensePower = 35;
-                currentScene++;
+                _player = new Entity(_playerName, 200, 45, 35);
+                _currentScene++;
             }
 
             else if (choice == 2)
             {
-                player.health = 100;
-                player.attackPower = 75;
-                player.defensePower = 40;
-                currentScene++;
+                _player = new Entity(_playerName, 100, 75, 40);
+                _currentScene++;
             }
         }
 
@@ -222,54 +208,14 @@ namespace BattleArena
         /// Prints a characters stats to the console
         /// </summary>
         /// <param name="">The character that will have its stats shown</param>
-        void DisplayStats(Character character)
+        void DisplayStats(Entity character)
         {
-            Console.WriteLine("Name: " + character.name);
-            Console.WriteLine("Health: " + character.health);
-            Console.WriteLine("Attack: " + character.attackPower);
-            Console.WriteLine("Defense: " + character.defensePower);
+            Console.WriteLine("Name: " + character.Name);
+            Console.WriteLine("Health: " + character.Health);
+            Console.WriteLine("Attack: " + character.AttackPower);
+            Console.WriteLine("Defense: " + character.DefensePower);
             Console.WriteLine();
         }
-
-        /// <summary>
-        /// Calculates the amount of damage that will be done to a character
-        /// </summary>
-        /// <param name="attackPower">The attacking character's attack power</param>
-        /// <param name="defensePower">The defending character's defense power</param>
-        /// <returns>The amount of damage done to the defender</returns>
-        float CalculateDamage(float attackPower, float defensePower)
-        {
-            float damageTaken = attackPower - defensePower;
-
-            if (damageTaken < 0)
-            {
-                damageTaken = 0;
-            }
-
-            return damageTaken;
-        }
-
-        /// <summary>
-        /// Deals damage to a character based on an attacker's attack power
-        /// </summary>
-        /// <param name="attacker">The character that initiated the attack</param>
-        /// <param name="defender">The character that is being attacked</param>
-        /// <returns>The amount of damage done to the defender</returns>
-        public float Attack(ref Character attacker, ref Character defender)
-        {
-            float damageTaken = CalculateDamage(attacker.attackPower, defender.defensePower);
-
-            defender.health -= damageTaken;
-
-            if (defender.health < 0)
-            {
-                defender.health = 0;
-            }
-
-            return damageTaken;
-        }
-
-
 
         /// <summary>
         /// Simulates one turn in the current monster fight
@@ -279,15 +225,15 @@ namespace BattleArena
             float damageDealth = 0;
 
             //Print PLayer stats
-            DisplayStats(player);
+            DisplayStats(_player);
             //Print Enemy stats
-            DisplayStats(currentEnemy);
+            DisplayStats(_currentEnemy);
 
-            int choice = GetInput("A " + currentEnemy.name + " approaches you!", "Attack", "Dodge");
+            int choice = GetInput("A " + _currentEnemy.name + " approaches you!", "Attack", "Dodge");
             if (choice == 1)
             {
                     //player attaks enemy 
-                    damageDealth = Attack(ref player, ref currentEnemy);
+                    damageDealth = Attack(ref _player, ref _currentEnemy);
                     Console.WriteLine("You dealth " + damageDealth + " damage!");
             }
              else if (choice == 2)
@@ -297,8 +243,8 @@ namespace BattleArena
                 Console.Clear();
             }
 
-            damageDealth = Attack(ref currentEnemy, ref player);
-            Console.WriteLine("The " + currentEnemy.name + " dealt" + damageDealth, " damage!");
+            damageDealth = Attack(ref _currentEnemy, ref _player);
+            Console.WriteLine("The " + _currentEnemy.name + " dealt" + damageDealth, " damage!");
 
             Console.ReadKey(true);
             Console.Clear();
@@ -312,27 +258,27 @@ namespace BattleArena
         {
             Console.Clear();
             //If the player dies they are asked if they want to keep playing or not
-            if (player.health <= 0)
+            if (_player.health <= 0)
             {
                 Console.WriteLine("You died! Get Gud!");
                 Console.ReadKey(true);
                 Console.Clear();
-                currentScene = 3;
+                _currentScene = 3;
             }
             //check if the enemy dies
-            else if (currentEnemy.health <= 0)
+            else if (_currentEnemy.health <= 0)
             {
-                Console.WriteLine("You Defeated " + currentEnemy.name);
+                Console.WriteLine("You Defeated " + _currentEnemy.name);
                 Console.ReadKey();
-                currentEnemyIndex++;
+                _currentEnemyIndex++;
 
                 //If all enemies have died continue to next scene
-                if (currentEnemyIndex >= enemies.Length)
+                if (_currentEnemyIndex >= _enemies.Length)
                 {
-                    currentScene = 3;
+                    _currentScene = 3;
                     return;
                 }
-                currentEnemy = enemies[currentEnemyIndex];                
+                _currentEnemy = _enemies[_currentEnemyIndex];                
             }
 
         }
