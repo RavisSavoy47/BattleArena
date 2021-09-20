@@ -3,15 +3,23 @@
 namespace BattleArena
 {
 
+    public struct Item
+    {
+        public string Name;
+        public float StatBoost;
+    }
+
     class Game
     {
         private bool _gameOver;
         private int _currentScene;
-        private Entity _player;
+        private Player _player;
         private Entity[] _enemies;
         private int _currentEnemyIndex;
         private Entity _currentEnemy;
         private string _playerName;
+        private Item[] _wizardItems;
+        private Item[] _knightItems;
         /// <summary>
         /// Function that starts the main game loop
         /// </summary>
@@ -28,15 +36,23 @@ namespace BattleArena
             End();
         }
 
-        /// <summary>
-        /// Function used to initialize any starting values by default
-        /// </summary>
-        public void Start()
+        public void InitializeItems()
         {
-            _gameOver = false;
-            _currentScene = 0;
-            _currentEnemyIndex = 0;
+            //Wizard Items
+            Item bigWand = new Item { Name = "Big Wand", StatBoost = 5 };
+            Item bigSheild = new Item { Name = "Big Sheild", StatBoost = 15 };
 
+            //Knight Items
+            Item stick = new Item { Name = "Large Stick", StatBoost = 25 };
+            Item shoes = new Item { Name = "The Drip", StatBoost = 9000.05f };
+
+            //Initialize arrays
+            _wizardItems = new Item[] { bigWand, bigSheild };
+            _knightItems = new Item[] { stick, shoes };
+        }
+
+        public void InitializeEnimes()
+        {
             Entity SmallFrog = new Entity("Nice Frog", 35, 10, 5);
 
             Entity StackedFrog = new Entity("Delux Frog", 55, 35, 13);
@@ -49,6 +65,17 @@ namespace BattleArena
             _enemies = new Entity[] { SmallFrog, StackedFrog, MegaFrog, KingFrog };
 
             _currentEnemy = _enemies[_currentEnemyIndex];
+        }
+
+        /// <summary>
+        /// Function used to initialize any starting values by default
+        /// </summary>
+        public void Start()
+        {
+            _gameOver = false;
+            _currentScene = 0;
+            InitializeEnimes();
+            InitializeItems();
         }
 
         /// <summary>
@@ -75,42 +102,38 @@ namespace BattleArena
         /// <param name="option1">The first option the player can choose</param>
         /// <param name="option2">The second option the player can choose</param>
         /// <returns></returns>
-        int GetInput(string description, string option1, string option2)
+        int GetInput(string description, params string[] options)
         {
             string input = "";
-            int inputReceived = 0;
+            int inputReceived = -1;
 
-            while (inputReceived != 1 && inputReceived != 2)
-            {//Print options
+            while (inputReceived == -1)
+            {
+                //Print options
                 Console.WriteLine(description);
-                Console.WriteLine("1. " + option1);
-                Console.WriteLine("2. " + option2);
+                for (int i = 0; i < options.Length; i++)
+                {
+                    Console.WriteLine((i + 1) + "." + ". " + options[i]);
+                }
                 Console.Write("> ");
 
                 //Get input from player
                 input = Console.ReadLine();
 
-                //If player selected the first option...
-                if (input == "1" || input == option1)
+                //If the player typed an int...
+                if (int.TryParse(input, out inputReceived))
                 {
-                    //Set input received to be the first option
-                    inputReceived = 1;
+                    //...decrement the input and check if it's within the bounds of the array
+                    inputReceived--;
+                    if (inputReceived < 0 || inputReceived >= options.Length)
+                    {
+                        //Set input received to be the default value
+                        inputReceived = -1;
+                        //Display error message
+                        Console.WriteLine("Invalid Input");
+                        Console.ReadKey(true);
+                    }
                 }
-                //Otherwise if the player selected the second option...
-                else if (input == "2" || input == option2)
-                {
-                    //Set input received to be the second option
-                    inputReceived = 2;
-                }
-                //If neither are true...
-                else
-                {
-                    //...display error message
-                    Console.WriteLine("Invalid Input");
-                    Console.ReadKey();
-                }
-
-                Console.Clear();
             }
             return inputReceived;
         }
@@ -193,13 +216,13 @@ namespace BattleArena
 
             if (choice == 1)
             {
-                _player = new Entity(_playerName, 200, 45, 35);
+                _player = new Player(_playerName, 200, 45, 35, _wizardItems);
                 _currentScene++;
             }
 
             else if (choice == 2)
             {
-                _player = new Entity(_playerName, 100, 75, 40);
+                _player = new Player(_playerName, 100, 75, 40, _knightItems);
                 _currentScene++;
             }
         }
@@ -229,7 +252,7 @@ namespace BattleArena
             //Print Enemy stats
             DisplayStats(_currentEnemy);
 
-            int choice = GetInput("A " + _currentEnemy.Name + " approaches you!", "Attack", "Dodge");
+            int choice = GetInput("A " + _currentEnemy.Name + " approaches you!", "Attack", "Equip Item");
             if (choice == 1)
             {
                     //player attaks enemy 
@@ -238,7 +261,7 @@ namespace BattleArena
             }
              else if (choice == 2)
             {
-                Console.WriteLine("you dodged the enemy's attack!");
+                Console.WriteLine("You dodged the enemy's attack!");
                 Console.ReadKey();
                 Console.Clear();
             }
