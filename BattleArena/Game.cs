@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 
 namespace BattleArena
 {
@@ -99,9 +100,28 @@ namespace BattleArena
         /// </summary>
         public void End()
         {
+            //Gives the player the end game text then closes the application
             Console.WriteLine("Fairwell " + _playerName + ".");
             Console.ReadKey(true);
         }
+
+        public void Save()
+        {
+            //Create a new stream writer
+            StreamWriter writer = new StreamWriter("SaveData.txt");
+
+            //Save current enemy index
+            writer.WriteLine(_currentEnemyIndex);
+
+            //Save player and enemy stats
+            _player.Save(writer);
+            _currentEnemy.Save(writer);
+
+            //Close writer when done saving
+            writer.Close();
+        }
+        
+
 
         /// <summary>
         /// Gets an input from the player based on some given decision
@@ -285,7 +305,8 @@ namespace BattleArena
             //Print Enemy stats
             DisplayStats(_currentEnemy);
 
-            int choice = GetInput("A " + _currentEnemy.Name + " approaches you!", "Attack", "Equip Item", "Remove Current Item");
+            int choice = GetInput("A " + _currentEnemy.Name + " approaches you!", "Attack", "Equip Item", "Remove Current Item", "Save");
+
             if (choice == 0)
             {
                     //player attaks enemy 
@@ -306,6 +327,14 @@ namespace BattleArena
                 else
                     Console.WriteLine("You placed the item in your bag.");
 
+                Console.ReadKey(true);
+                Console.Clear();
+                return;
+            }
+            else if (choice == 3)
+            {
+                Save();
+                Console.WriteLine("Saved Game");
                 Console.ReadKey(true);
                 Console.Clear();
                 return;
