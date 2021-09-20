@@ -10,7 +10,7 @@ namespace BattleArena
         private Item[] _items;
         private Item _currentItem;
         private int _currentItemIndex;
-       
+        private string _job;
 
         public override float DefensePower
         {
@@ -38,10 +38,35 @@ namespace BattleArena
             get { return _currentItem; }
         }
 
-        public Player(string name, float health, float attackPower, float defensePower, Item[] items) : base(name, health, attackPower, defensePower)
+        public string Job
+        {
+            get
+            {
+                return _job;
+            }
+            set
+            {
+                _job = value;
+            }
+        }
+
+        public Player()
+        {
+            _items = new Item[0];
+            _currentItem.Name = "Nothing";
+        }
+
+        public Player(Item[] items): base()
+        {
+            _currentItem.Name = "Nothing";
+            _items = items;
+        }
+
+        public Player(string name, float health, float attackPower, float defensePower, Item[] items, string job) : base(name, health, attackPower, defensePower)
         {
             _items = items;
             _currentItem.Name = "Nothing";
+            _job = job;
         }
         /// <summary>
         /// Sets the item at thh egiven index to be the current item
@@ -100,8 +125,29 @@ namespace BattleArena
 
         public override void Save(StreamWriter writer)
         {
+            writer.WriteLine(_job);
             base.Save(writer);
             writer.WriteLine(_currentItemIndex);
+        }
+
+        public override bool Load(StreamReader reader)
+        {
+            //If the base loading fuction fails...
+            if (!base.Load(reader))
+                //...return false
+                return false;
+
+            //If the current line can't be converted into an int..
+            if (!int.TryParse(reader.ReadLine(), out _currentItemIndex))
+                //...return false
+                return false;
+
+            //Return whether or not the item was equipped successfully
+            TryEquipItem(_currentItemIndex);
+            {
+                return true;
+            }
+
         }
     }
 }
