@@ -116,9 +116,12 @@ namespace BattleArena
 
         public void Save()
         {
+            bool loadSuccessfull = true;
+
             //Create a new stream writer
             StreamWriter writer = new StreamWriter("SaveData.txt");
-
+                //...return false
+                loadSuccessfull = false;
             //Save current enemy index
             writer.WriteLine(_currentEnemyIndex);
 
@@ -132,10 +135,12 @@ namespace BattleArena
         
         public bool Load()
         {
+            bool loadSuccessfull = true;
+
             //If the file exist..
             if (!File.Exists("SaveData.txt"))
                 //..return false
-                return false;
+                loadSuccessfull = false;
 
             //Create a new reader to read from the text file
             StreamReader reader = new StreamReader("SaveData.txt");
@@ -143,7 +148,7 @@ namespace BattleArena
             //If the first line can't be converted into a integer..
             if (!int.TryParse(reader.ReadLine(), out _currentEnemyIndex))
                 //...return false
-                return false;
+                loadSuccessfull = false;
 
             //Load player job
             string job = reader.ReadLine();
@@ -154,17 +159,17 @@ namespace BattleArena
             else if (job == "knight")
                 _player = new Player(_knightItems);
             else
-                return false;
+                loadSuccessfull = false;
 
             _player.Job = job;
 
             if (!_player.Load(reader))
-                return false;
+                loadSuccessfull = false;
 
             //Create a new instance and try to load the enemy
             _currentEnemy = new Entity();
             if (!_currentEnemy.Load(reader))
-                return false;
+                loadSuccessfull = false;
 
             //Update the array to match the current enemy stats
             _enemies[_currentEnemyIndex] = _currentEnemy;
@@ -403,6 +408,7 @@ namespace BattleArena
             {
                 if (!_player.TryRemoveCurrentItem())
                     Console.WriteLine("You have no items equipped.");
+                    
                 else
                     Console.WriteLine("You placed the item in your bag.");
 

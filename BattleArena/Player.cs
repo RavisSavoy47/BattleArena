@@ -54,12 +54,14 @@ namespace BattleArena
         {
             _items = new Item[0];
             _currentItem.Name = "Nothing";
+            _currentItemIndex = -1;
         }
 
         public Player(Item[] items): base()
         {
             _currentItem.Name = "Nothing";
             _items = items;
+            _currentItemIndex = -1;
         }
 
         public Player(string name, float health, float attackPower, float defensePower, Item[] items, string job) : base(name, health, attackPower, defensePower)
@@ -67,6 +69,7 @@ namespace BattleArena
             _items = items;
             _currentItem.Name = "Nothing";
             _job = job;
+            _currentItemIndex = -1;
         }
         /// <summary>
         /// Sets the item at thh egiven index to be the current item
