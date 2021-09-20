@@ -47,12 +47,12 @@ namespace BattleArena
         public void InitializeItems()
         {
             //Wizard Items
-            Item bigWand = new Item { Name = "Big Wand", StatBoost = 20, ItemType = 1 };
-            Item bigSheild = new Item { Name = "Big Sheild", StatBoost = 15, ItemType = 0};
+            Item bigWand = new Item { Name = "Big Wand", StatBoost = 20, Type = ItemType.ATTACK };
+            Item bigSheild = new Item { Name = "Big Sheild", StatBoost = 15, Type = ItemType.DEFENSE};
 
             //Knight Items
-            Item stick = new Item { Name = "Large Stick", StatBoost = 25, ItemType = 1 };
-            Item shoes = new Item { Name = "The Drip", StatBoost = 1000, ItemType = 0 };
+            Item stick = new Item { Name = "Large Stick", StatBoost = 25, Type = ItemType.ATTACK };
+            Item shoes = new Item { Name = "The Drip", StatBoost = 1000, Type = ItemType.DEFENSE };
 
             //Initialize arrays
             _wizardItems = new Item[] { bigWand, bigSheild };
@@ -99,7 +99,7 @@ namespace BattleArena
         /// </summary>
         public void End()
         {
-            Console.WriteLine("Fairwell NERD!");
+            Console.WriteLine("Fairwell " + _playerName + ".");
             Console.ReadKey(true);
         }
 
@@ -150,6 +150,7 @@ namespace BattleArena
                     inputReceived = -1;
                     Console.WriteLine("Invalid Input Bro!");
                     Console.ReadKey(true);
+                    Console.Clear();
                 }
 
 
@@ -294,6 +295,17 @@ namespace BattleArena
              else if (choice == 1)
             {
                 DisplayEquipItemMenu();
+                Console.ReadKey(true);
+                Console.Clear();
+                return;
+            }
+            else if (choice == 2)
+            {
+                if (!_player.TryRemoveCurrentItem())
+                    Console.WriteLine("You have no items equipped.");
+                else
+                    Console.WriteLine("You placed the item in your bag.");
+
                 Console.ReadKey(true);
                 Console.Clear();
                 return;
