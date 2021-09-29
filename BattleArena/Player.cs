@@ -7,6 +7,7 @@ namespace BattleArena
 {
     class Player : Entity
     {
+        private int _money;
         private Item[] _items;
         private Item _currentItem;
         private int _currentItemIndex;
